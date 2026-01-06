@@ -24,4 +24,9 @@ variable "bucket_location" {
   type        = string
   default     = "EU"
 }
+variable "image" {
+  description = "Docker image for Cloud Run Job"
+  type        = string
+}
+
 
