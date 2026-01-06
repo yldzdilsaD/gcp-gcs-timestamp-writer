@@ -17,4 +17,8 @@ resource "google_cloud_run_v2_job" "gcs_writer_job" {
       }
     }
   }
+  depends_on = [
+    google_project_service.cloud_run_api,
+    google_project_service.artifact_registry_api
+  ]
 }
