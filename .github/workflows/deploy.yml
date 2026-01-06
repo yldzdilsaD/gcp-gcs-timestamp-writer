@@ -15,11 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Auth to GCP
+      - name: Auth to GCP (Workload Identity)
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: projects/14240076180/locations/global/workloadIdentityPools/github-pool/providers/github
-          service_account: github-ci@gcp-dummy-483112.iam.gserviceaccount.com
+          workload_identity_provider: projects/14240076180/locations/global/workloadIdentityPools/github-wif-dev/providers/github
+          service_account: github-ci-gcs-writer@gcp-dummy-483112.iam.gserviceaccount.com
 
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v2
@@ -33,6 +33,6 @@ jobs:
       - name: Terraform Apply
         run: |
           cd terraform
-          terraform init
+          terraform init -input=false
           terraform apply -auto-approve \
             -var="image=europe-west1-docker.pkg.dev/gcp-dummy-483112/gcp-demo/gcs-writer:${{ github.sha }}"
