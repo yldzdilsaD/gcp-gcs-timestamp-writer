@@ -33,10 +33,5 @@ jobs:
           docker build -t $IMAGE .
           docker push $IMAGE
 
-
-      - name: Terraform Apply
-        run: |
-          cd terraform
-          terraform init -input=false
-          terraform apply -auto-approve \
-            -var="image=europe-west1-docker.pkg.dev/gcp-dummy-483112/gcp-demo/gcs-writer:${{ github.sha }}"
+      - name: Terraform Apply (dev)
+        run: ./ci/deploy.sh dev apply
