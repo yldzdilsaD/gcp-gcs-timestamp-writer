@@ -15,3 +15,12 @@ resource "google_project_iam_member" "github_ci_artifact_registry" {
   role    = "roles/artifactregistry.writer"
   member  = "serviceAccount:${google_service_account.github_ci.email}"
 }
+resource "google_artifact_registry_repository_iam_member" "github_ci_writer" {
+  project    = var.project_id
+  location   = var.region
+  repository = "gcp-demo"
+
+  role   = "roles/artifactregistry.writer"
+  member = "serviceAccount:${google_service_account.github_ci.email}"
+}
+
