@@ -23,4 +23,9 @@ resource "google_artifact_registry_repository_iam_member" "github_ci_writer" {
   role   = "roles/artifactregistry.writer"
   member = "serviceAccount:${google_service_account.github_ci.email}"
 }
+resource "google_service_account_iam_member" "github_token_creator" {
+  service_account_id = google_service_account.github_ci.name
+  role               = "roles/iam.serviceAccountTokenCreator"
+  member             = "principalSet://iam.googleapis.com/projects/14240076180/locations/global/workloadIdentityPools/github-wif-dev/*"
+}
 
