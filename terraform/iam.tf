@@ -18,3 +18,11 @@ resource "google_service_account_iam_member" "github_wif_binding" {
 
   member = "principalSet://iam.googleapis.com/projects/${data.google_project.current.number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.github.workload_identity_pool_id}/attribute.repository/${var.github_repo}/attribute.ref/refs/heads/master"
 }
+
+resource "google_service_account_iam_member" "github_wif_token_creator" {
+  service_account_id = google_service_account.github_ci.name
+  role               = "roles/iam.serviceAccountTokenCreator"
+
+  member = "principalSet://iam.googleapis.com/projects/${data.google_project.current.number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.github.workload_identity_pool_id}/attribute.repository/${var.github_repo}/attribute.ref/refs/heads/master"
+}
+
