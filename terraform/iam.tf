@@ -23,3 +23,8 @@ resource "google_storage_bucket_iam_member" "github_ci_tf_state" {
   role   = "roles/storage.objectAdmin"
   member = "serviceAccount:${google_service_account.github_ci.email}"
 }
+resource "google_project_iam_member" "github_ci_project_admin" {
+  project = var.project_id
+  role    = "roles/editor"
+  member  = "serviceAccount:${google_service_account.github_ci.email}"
+}
