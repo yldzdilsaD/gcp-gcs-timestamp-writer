@@ -32,4 +32,7 @@ tasks.jar {
             .filter { it.name.endsWith("jar") }
             .map { zipTree(it) }
     })
+    exclude("META-INF/*.SF")
+    exclude("META-INF/*.DSA")
+    exclude("META-INF/*.RSA")
 }
