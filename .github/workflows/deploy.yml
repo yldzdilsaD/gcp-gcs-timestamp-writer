@@ -8,6 +8,10 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  ENV: ${{ github.ref_name == 'master' && 'prod' || 'dev' }}
+  PROJECT_NUMBER: ${{ github.ref_name == 'master' && vars.PROD_PROJECT_NUMBER || vars.DEV_PROJECT_NUMBER }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -18,7 +22,7 @@ jobs:
       - name: Auth to GCP (Workload Identity)
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: projects/14240076180/locations/global/workloadIdentityPools/github-wif-dev/providers/github
+          workload_identity_provider: projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-wif-dev/providers/github
           service_account: github-ci-gcs-writer@gcp-dummy-483112.iam.gserviceaccount.com
 
       - name: Setup gcloud
