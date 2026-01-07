@@ -35,6 +35,11 @@ jobs:
           docker build -t $IMAGE .
           docker push $IMAGE
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+
       - name: Terraform Apply
         run: |
           bash ./ci/deploy.sh dev apply
