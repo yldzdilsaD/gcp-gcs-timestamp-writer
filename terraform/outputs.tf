@@ -7,8 +7,7 @@ output "bucket_name" {
   value       = google_storage_bucket.app_bucket.name
 }
 output "container_image" {
-  description = "Docker image used by Cloud Run Job"
-  value       = "europe-west1-docker.pkg.dev/${var.project_id}/gcp-demo/gcs-writer:latest"
+  value = google_cloud_run_v2_job.gcs_writer_job.template[0].template[0].containers[0].image
 }
 output "cloud_run_job_name" {
   description = "Cloud Run Job name"
