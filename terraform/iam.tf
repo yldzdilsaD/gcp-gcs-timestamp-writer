@@ -57,3 +57,15 @@ resource "google_service_account_iam_member" "github_token_creator" {
 
   member = "principalSet://iam.googleapis.com/projects/${data.google_project.current.number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.github.workload_identity_pool_id}/attribute.repository/${var.github_repo}"
 }
+resource "google_project_iam_member" "github_ci_service_usage" {
+  project = var.project_id
+  role    = "roles/serviceusage.serviceUsageAdmin"
+  member  = "serviceAccount:${google_service_account.github_ci.email}"
+}
+
+resource "google_project_iam_member" "github_ci_project_viewer" {
+  project = var.project_id
+  role    = "roles/viewer"
+  member  = "serviceAccount:${google_service_account.github_ci.email}"
+}
+
