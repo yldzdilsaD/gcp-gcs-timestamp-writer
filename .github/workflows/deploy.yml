@@ -35,5 +35,6 @@ jobs:
           docker build -t $IMAGE .
           docker push $IMAGE
 
-      - name: Terraform Apply (dev)
-        run: ./ci/deploy.sh dev apply
+      - name: Terraform Apply
+        run: |
+          bash ./ci/deploy.sh dev apply
