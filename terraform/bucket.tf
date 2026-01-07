@@ -21,12 +21,6 @@ resource "google_storage_bucket" "app_bucket" {
   }
 }
 
-resource "google_storage_bucket_iam_member" "cloudrun_bucket_writer" {
-  bucket = google_storage_bucket.app_bucket.name
-  role   = "roles/storage.objectCreator"
-  member = "serviceAccount:${google_service_account.cloudrun_sa.email}"
-}
-
 /*| Ayar                          | Açıklama                        |
 | ----------------------------- | ------------------------------- |
 | `uniform_bucket_level_access` | IAM ile kontrol (ACL yok)       |
