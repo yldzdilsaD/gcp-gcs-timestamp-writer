@@ -1,14 +1,16 @@
 #!/bin/bash
 set -euo pipefail
 
-# deploy.sh dosyasının bulunduğu dizin (ci/)
+# -----------------------------------
+# Paths
+# -----------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-# Terraform root dizini (ci'nin kardeşi)
 TERRAFORM_DIR="$SCRIPT_DIR/../terraform"
-
 cd "$TERRAFORM_DIR"
 
+# -----------------------------------
+# Args
+# -----------------------------------
 ENV=${1:-}
 ACTION=${2:-}
 
@@ -41,26 +43,43 @@ echo " Terraform   : $(pwd)"
 echo " Vars file   : $TFVARS"
 echo "-----------------------------------"
 
-# Prod için ekstra emniyet
-if [[ "$ENV" == "prod" && "$ACTION" == "apply" ]]; then
+# -----------------------------------
+# Prod safety (only for local)
+# -----------------------------------
+if [[ "$ENV" == "prod" && "$ACTION" == "apply" && "${CI:-}" != "true" ]]; then
   echo "⚠️  YOU ARE APPLYING TO PROD ⚠️"
   read -p "Type 'prod' to continue: " CONFIRM
   [[ "$CONFIRM" == "prod" ]] || exit 1
 fi
 
+# -----------------------------------
+# Terraform init
+# -----------------------------------
 terraform init -input=false
 
+# -----------------------------------
+# Build terraform command
+# -----------------------------------
+TF_CMD=(terraform "$ACTION" -var-file="$TFVARS")
+
+# IMAGE override from pipeline
 if [[ -n "${IMAGE:-}" ]]; then
   echo "Using IMAGE from pipeline: $IMAGE"
-  terraform $ACTION -auto-approve -var-file="$TFVARS" -var="image=$IMAGE"
-else
-  terraform $ACTION -auto-approve -var-file="$TFVARS"
+  TF_CMD+=(-var="image=$IMAGE")
 fi
 
-#Script her nereden çağrılırsa çağrılsın
- #
- #Terraform hep doğru klasörde çalışır
- #
- #envs/dev.tfvars yolu bozulmaz
- #
- #GitHub Actions’ta da birebir aynı çalışır
+# Auto-approve only in CI and only for apply
+if [[ "${CI:-}" == "true" && "$ACTION" == "apply" ]]; then
+  echo "CI detected → auto-approve enabled"
+  TF_CMD+=(-auto-approve)
+fi
+
+echo "-----------------------------------"
+echo "Running command:"
+echo "  ${TF_CMD[*]}"
+echo "-----------------------------------"
+
+# -----------------------------------
+# Execute
+# -----------------------------------
+"${TF_CMD[@]}"

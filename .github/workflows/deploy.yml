@@ -36,6 +36,12 @@ jobs:
           docker push $IMAGE
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
 
+      - name: Deploy Image to Cloud Run Job
+        run: |
+          gcloud run jobs update gcs-writer-job \
+            --region=europe-west1 \
+            --image=${{ env.IMAGE }}
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -43,5 +49,6 @@ jobs:
 
       - name: Terraform Apply
         run: |
-          IMAGE=${{ env.IMAGE }} bash ./ci/deploy.sh dev apply
+          bash ./ci/deploy.sh dev apply
+
 
