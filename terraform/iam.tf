@@ -18,3 +18,8 @@ resource "google_service_account_iam_member" "github_wif_user" {
   member             = local.github_principal
 }
 
+resource "google_storage_bucket_iam_member" "github_ci_tf_state" {
+  bucket = "gcp-dummy-483112-tfstate"
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.github_ci.email}"
+}
