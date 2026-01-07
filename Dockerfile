@@ -12,7 +12,7 @@ RUN gradle dependencies --no-daemon
 COPY src ./src
 
 # Build jar
-RUN gradle clean build --no-daemon
+RUN gradle clean jar --no-daemon
 
 # -------- RUNTIME STAGE --------
 FROM eclipse-temurin:21-jre
