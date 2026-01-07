@@ -32,8 +32,9 @@ jobs:
       - name: Build & Push Image
         run: |
           IMAGE=europe-west1-docker.pkg.dev/gcp-dummy-483112/gcp-demo/gcs-writer:${{ github.sha }}
-          docker build -t $IMAGE .
+          docker build --no-cache -t $IMAGE .
           docker push $IMAGE
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -42,4 +43,5 @@ jobs:
 
       - name: Terraform Apply
         run: |
-          bash ./ci/deploy.sh dev apply
+          IMAGE=${{ env.IMAGE }} bash ./ci/deploy.sh dev apply
+
