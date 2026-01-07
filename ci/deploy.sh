@@ -52,11 +52,10 @@ terraform init -input=false
 
 if [[ -n "${IMAGE:-}" ]]; then
   echo "Using IMAGE from pipeline: $IMAGE"
-  terraform $ACTION -var-file="$TFVARS" -var="image=$IMAGE"
+  terraform $ACTION -auto-approve -var-file="$TFVARS" -var="image=$IMAGE"
 else
-  terraform $ACTION -var-file="$TFVARS"
+  terraform $ACTION -auto-approve -var-file="$TFVARS"
 fi
-
 
 #Script her nereden çağrılırsa çağrılsın
  #
