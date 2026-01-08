@@ -1,7 +1,10 @@
 locals {
-  github_principal = "principalSet://iam.googleapis.com/projects/${data.google_project.current.number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.github.workload_identity_pool_id}/attribute.repository/${var.github_repo}"
-}
+  wif_project_number = data.google_project.current.number
+  wif_pool_id        = google_iam_workload_identity_pool.github.workload_identity_pool_id
+  github_repo        = var.github_repo
 
+  github_principal = "principalSet://iam.googleapis.com/projects/${local.wif_project_number}/locations/global/workloadIdentityPools/${local.wif_pool_id}/attribute.repository/${local.github_repo}"
+}
 resource "google_service_account_iam_member" "github_wif_user" {
   service_account_id = google_service_account.github_ci.name
   role               = "roles/iam.workloadIdentityUser"
