@@ -18,9 +18,7 @@ resource "google_project_iam_member" "github_ci_project_admin" {
   role    = "roles/editor"
   member  = "serviceAccount:${google_service_account.github_ci.email}"
 }
-######################################
-# Cloud Run Service Account Roles
-######################################
+
 resource "google_project_iam_member" "cloudrun_roles" {
   for_each = toset([
     "roles/run.admin",
@@ -39,18 +37,12 @@ resource "google_storage_bucket_iam_member" "cloudrun_bucket_writer" {
   member = "serviceAccount:${google_service_account.cloudrun_sa.email}"
 }
 
-######################################
-# GitHub CI → Artifact Registry
-######################################
 resource "google_project_iam_member" "github_ci_artifact_registry" {
   project = var.project_id
   role    = "roles/artifactregistry.writer"
   member  = "serviceAccount:${google_service_account.github_ci.email}"
 }
 
-######################################
-# GitHub CI → Token Creator (WIF)
-######################################
 resource "google_service_account_iam_member" "github_token_creator" {
   service_account_id = google_service_account.github_ci.name
   role               = "roles/iam.serviceAccountTokenCreator"
