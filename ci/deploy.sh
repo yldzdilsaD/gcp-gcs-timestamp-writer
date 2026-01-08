@@ -1,16 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-# -----------------------------------
-# Paths
-# -----------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TERRAFORM_DIR="$SCRIPT_DIR/../terraform"
 cd "$TERRAFORM_DIR"
 
-# -----------------------------------
-# Args
-# -----------------------------------
 ENV=${1:-}
 ACTION=${2:-}
 
@@ -43,32 +37,23 @@ echo " Terraform   : $(pwd)"
 echo " Vars file   : $TFVARS"
 echo "-----------------------------------"
 
-# -----------------------------------
-# Prod safety (only for local)
-# -----------------------------------
 if [[ "$ENV" == "prod" && "$ACTION" == "apply" && "${CI:-}" != "true" ]]; then
-  echo "⚠️  YOU ARE APPLYING TO PROD ⚠️"
+  echo "YOU ARE APPLYING TO PROD"
   read -p "Type 'prod' to continue: " CONFIRM
   [[ "$CONFIRM" == "prod" ]] || exit 1
 fi
 
-# -----------------------------------
-# Terraform init
-# -----------------------------------
 terraform init -input=false
 
-# -----------------------------------
-# Build terraform command
-# -----------------------------------
 TF_CMD=(terraform "$ACTION" -var-file="$TFVARS")
 
-# IMAGE override from pipeline
+# imaj pipelinedan alınacak sh her seferinde güncellendiği için
 if [[ -n "${IMAGE:-}" ]]; then
   echo "Using IMAGE from pipeline: $IMAGE"
   TF_CMD+=(-var="image=$IMAGE")
 fi
 
-# Auto-approve only in CI and only for apply
+# sadece ci için otomatik aprrove
 if [[ "${CI:-}" == "true" && "$ACTION" == "apply" ]]; then
   echo "CI detected → auto-approve enabled"
   TF_CMD+=(-auto-approve)
@@ -79,7 +64,4 @@ echo "Running command:"
 echo "  ${TF_CMD[*]}"
 echo "-----------------------------------"
 
-# -----------------------------------
-# Execute
-# -----------------------------------
 "${TF_CMD[@]}"
