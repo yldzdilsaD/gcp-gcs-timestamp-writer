@@ -20,6 +20,7 @@ class GcsWriter(
     private fun deleteExistingTxtFiles() {
         val blobs = storage.list(bucketName).iterateAll()
 
+
         blobs
             .filter { it.name.endsWith(".txt") }
             .forEach { blob ->
